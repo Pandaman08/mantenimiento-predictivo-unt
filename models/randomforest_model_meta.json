@@ -1,0 +1,54 @@
+{
+  "model_type": "RandomForest",
+  "best_params": {},
+  "training_time": 0.574655294418335,
+  "feature_names": [],
+  "metadata": {
+    "val_metrics": {
+      "accuracy": 0.949390243902439,
+      "precision": 1.0,
+      "recall": 0.011904761904761904,
+      "f1_score": 0.023529411764705882,
+      "roc_auc": 0.49233382298934997,
+      "pr_auc": 0.07465158071646465,
+      "inference_time_per_sample": 2.7113862153960436e-05,
+      "confusion_matrix": [
+        [
+          1556,
+          0
+        ],
+        [
+          83,
+          1
+        ]
+      ],
+      "classification_report": {
+        "0": {
+          "precision": 0.949359365466748,
+          "recall": 1.0,
+          "f1-score": 0.9740219092331769,
+          "support": 1556.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 0.011904761904761904,
+          "f1-score": 0.023529411764705882,
+          "support": 84.0
+        },
+        "accuracy": 0.949390243902439,
+        "macro avg": {
+          "precision": 0.974679682733374,
+          "recall": 0.5059523809523809,
+          "f1-score": 0.4987756604989414,
+          "support": 1640.0
+        },
+        "weighted avg": {
+          "precision": 0.9519531540647926,
+          "recall": 0.949390243902439,
+          "f1-score": 0.9253381471677186,
+          "support": 1640.0
+        }
+      }
+    }
+  }
+}

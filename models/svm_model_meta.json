@@ -1,0 +1,54 @@
+{
+  "model_type": "SVM",
+  "best_params": {},
+  "training_time": 12.29543137550354,
+  "feature_names": [],
+  "metadata": {
+    "val_metrics": {
+      "accuracy": 0.8640243902439024,
+      "precision": 0.039735099337748346,
+      "recall": 0.07142857142857142,
+      "f1_score": 0.05106382978723404,
+      "roc_auc": 0.4932060227690048,
+      "pr_auc": 0.05145781266708916,
+      "inference_time_per_sample": 0.0005936394377452571,
+      "confusion_matrix": [
+        [
+          1411,
+          145
+        ],
+        [
+          78,
+          6
+        ]
+      ],
+      "classification_report": {
+        "0": {
+          "precision": 0.9476158495634655,
+          "recall": 0.9068123393316195,
+          "f1-score": 0.9267651888341545,
+          "support": 1556.0
+        },
+        "1": {
+          "precision": 0.039735099337748346,
+          "recall": 0.07142857142857142,
+          "f1-score": 0.05106382978723404,
+          "support": 84.0
+        },
+        "accuracy": 0.8640243902439024,
+        "macro avg": {
+          "precision": 0.4936754744506069,
+          "recall": 0.48912045538009546,
+          "f1-score": 0.48891450931069425,
+          "support": 1640.0
+        },
+        "weighted avg": {
+          "precision": 0.9011146404055629,
+          "recall": 0.8640243902439024,
+          "f1-score": 0.8819121923951659,
+          "support": 1640.0
+        }
+      }
+    }
+  }
+}

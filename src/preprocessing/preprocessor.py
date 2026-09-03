@@ -57,6 +57,8 @@ class DataPreprocessor:
         if df.empty:
             return pd.DataFrame()
         
+        df['valor'] = pd.to_numeric(df['valor'], errors='coerce')
+        
         # Pivot to wide format
         df_pivot = df.pivot_table(
             index=['timestamp', 'equipo_id', 'equipo_codigo', 'equipo_tipo'],
@@ -68,35 +70,25 @@ class DataPreprocessor:
         df_pivot.columns.name = None
         return df_pivot
     
-    def create_target_variable(self, df: pd.DataFrame, prediction_window_hours: int = 24) -> pd.DataFrame:
-        """Create target variable: failure in next N hours based on quality alerts"""
+    def create_target_variable(self, df: pd.DataFrame, prediction_window_hours: int = 12) -> pd.DataFrame:
+        """Create target variable: failure in next N hours based on threshold breaches"""
         df = df.copy()
         df = df.sort_values(['equipo_id', 'timestamp'])
+        df[self.target_name] = 0
         
-        # Define failure as: any sensor with calidad_dato=2 in next 24h
-        # Since we don't have calidad_dato in pivoted data, use threshold-based approach
-        # For synthetic data, we'll use vibration and temperature thresholds
-        
-        failure_conditions = []
         for equipo_id in df['equipo_id'].unique():
             mask = df['equipo_id'] == equipo_id
-            equipo_data = df[mask].copy()
+            eq_idx = df[mask].index
             
-            # Rolling windows for degradation detection
-            if 'vibracion' in equipo_data.columns:
-                vib_rolling = equipo_data['vibracion'].rolling(window=24, min_periods=1).mean()
-                vib_threshold = equipo_data['vibracion'].quantile(0.95)
-                failure_conditions.append((mask) & (vib_rolling > vib_threshold).shift(-prediction_window_hours))
+            vib_val = df.loc[eq_idx, 'vibracion'] if 'vibracion' in df.columns else pd.Series(0, index=eq_idx)
+            temp_val = df.loc[eq_idx, 'temperatura'] if 'temperatura' in df.columns else pd.Series(0, index=eq_idx)
             
-            if 'temperatura' in equipo_data.columns:
-                temp_rolling = equipo_data['temperatura'].rolling(window=24, min_periods=1).mean()
-                temp_threshold = equipo_data['temperatura'].quantile(0.95)
-                failure_conditions.append((mask) & (temp_rolling > temp_threshold).shift(-prediction_window_hours))
-        
-        if failure_conditions:
-            df[self.target_name] = np.any(failure_conditions, axis=0).astype(int)
-        else:
-            df[self.target_name] = 0
+            is_anomaly = (
+                (vib_val > vib_val.quantile(0.97)) |
+                (temp_val > temp_val.quantile(0.97))
+            )
+            shifted = is_anomaly.shift(-prediction_window_hours).fillna(False)
+            df.loc[eq_idx, self.target_name] = shifted.astype(int)
         
         return df
     
@@ -113,6 +105,7 @@ class DataPreprocessor:
                 else:
                     df[col] = self.imputers[col].transform(df[[col]]).flatten()
         
+        df = df.fillna(0)
         return df
     
     def remove_duplicates(self, df: pd.DataFrame, subset: List[str] = None) -> pd.DataFrame:

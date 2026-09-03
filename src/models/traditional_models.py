@@ -139,7 +139,11 @@ class TraditionalModelTrainer:
         """Evaluate model performance"""
         start_time = time.time()
         y_pred = self.model.predict(X)
-        y_proba = self.model.predict_proba(X)[:, 1] if hasattr(self.model, 'predict_proba') else y_pred
+        if hasattr(self.model, 'predict_proba'):
+            p = self.model.predict_proba(X)
+            y_proba = p[:, 1] if p.shape[1] > 1 else p[:, 0]
+        else:
+            y_proba = y_pred
         inference_time = time.time() - start_time
         
         metrics = {
@@ -163,7 +167,8 @@ class TraditionalModelTrainer:
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
         """Get prediction probabilities"""
         if hasattr(self.model, 'predict_proba'):
-            return self.model.predict_proba(X)[:, 1]
+            p = self.model.predict_proba(X)
+            return p[:, 1] if p.shape[1] > 1 else p[:, 0]
         return self.model.predict(X)
     
     def save_model(self, path: str, metadata: Dict = None):

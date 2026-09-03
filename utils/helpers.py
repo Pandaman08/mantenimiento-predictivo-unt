@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+import html
 
 
 def format_date(value, fmt: str = '%Y-%m-%d %H:%M:%S'):
@@ -24,3 +25,14 @@ def normalize_text(value):
     if value is None:
         return ''
     return str(value).strip()
+
+
+def sanitize_text(value) -> str:
+    """Escape any HTML special characters to prevent injection when interpolating into HTML.
+
+    This intentionally escapes all angle brackets and ampersands so dynamic values
+    are rendered as plain text inside templates that use `unsafe_allow_html=True`.
+    """
+    if value is None:
+        return ''
+    return html.escape(str(value))
