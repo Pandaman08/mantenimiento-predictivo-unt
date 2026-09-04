@@ -2,13 +2,21 @@
 
 Aplicación de analítica predictiva para mantenimiento de equipos con Streamlit, PostgreSQL y modelos de IA.
 
+# Ingeniería de Software II - IS-402 Universidad Nacional de Trujillo
+
+# Integrantes
+  - Cruz Esquivel Luis
+  - Paz Romero Alvaro Joseph
+
 ## Requisitos previos
 
 - Python 3.10 o 3.11
 - PostgreSQL 14+
 - Git
-
-## 1) Crear entorno virtual
+## Clonar repositorio
+```bash
+git clone https://github.com/Pandaman08/mantenimiento-predictivo-unt.git
+cd mantenimiento-predictivo-unt
 
 ```bash
 python -m venv venv
