@@ -10,9 +10,9 @@ class Settings:
     def __init__(self):
         self.DB_HOST = os.getenv("DB_HOST", "localhost")
         self.DB_PORT = int(os.getenv("DB_PORT", "5432"))
-        self.DB_NAME = os.getenv("DB_NAME", "mining_maintenance")
+        self.DB_NAME = os.getenv("DB_NAME", "bd_mantenimientoproductivoUNT")
         self.DB_USER = os.getenv("DB_USER", "postgres")
-        self.DB_PASS = os.getenv("DB_PASS", os.getenv("DB_PASSWORD", "postgres"))
+        self.DB_PASS = os.getenv("DB_PASS", os.getenv("DB_PASSWORD", "300805"))
         self.DB_PASSWORD = self.DB_PASS
         self.JWT_SECRET_KEY = os.getenv("JWT_SECRET", os.getenv("JWT_SECRET_KEY", "your-super-secret-key-change-in-production"))
         self.JWT_ALGORITHM = "HS256"

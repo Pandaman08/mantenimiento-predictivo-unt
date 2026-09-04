@@ -15,7 +15,7 @@ def render_data_preparation():
     
     p_cols = st.columns(4)
     with p_cols[0]:
-        st.markdown(
+        st.html(
             """
             <div class="unt-card" style="height:100%;">
                 <div style="font-size:1.5rem; margin-bottom:6px;">📥 1. Ingesta</div>
@@ -24,11 +24,10 @@ def render_data_preparation():
                     Lecturas continuas de sensores reordenadas en matriz temporal unificada por equipo.
                 </p>
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
     with p_cols[1]:
-        st.markdown(
+        st.html(
             """
             <div class="unt-card" style="height:100%;">
                 <div style="font-size:1.5rem; margin-bottom:6px;">🧼 2. Limpieza</div>
@@ -37,11 +36,10 @@ def render_data_preparation():
                     Reemplazo de nulos por mediana y filtrado de señales espurias mediante umbrales IQR.
                 </p>
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
     with p_cols[2]:
-        st.markdown(
+        st.html(
             """
             <div class="unt-card" style="height:100%;">
                 <div style="font-size:1.5rem; margin-bottom:6px;">🔬 3. Features</div>
@@ -50,11 +48,10 @@ def render_data_preparation():
                     Medias y desvíos móviles (6h, 12h, 24h) para capturar tendencias de degradación mecánica.
                 </p>
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
     with p_cols[3]:
-        st.markdown(
+        st.html(
             """
             <div class="unt-card" style="height:100%;">
                 <div style="font-size:1.5rem; margin-bottom:6px;">🎯 4. Target</div>
@@ -63,11 +60,10 @@ def render_data_preparation():
                     Definición de falla binaria (0/1) con horizonte anticipatorio de 24 horas previas.
                 </p>
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
 
-    st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>", unsafe_allow_html=True)
+    st.html("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>")
 
     # Feature Engineering Specification Table
     st.markdown("### 📐 Diccionario de Variables Derivadas (Feature Engineering)")

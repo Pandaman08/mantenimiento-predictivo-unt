@@ -112,7 +112,7 @@ def render_metric_card(
 
     sub_html = f"<div style='font-size:0.75rem; color:{UNT_MUTED}; margin-top:4px;'>{subtitle_safe}</div>" if subtitle else ""
 
-    st.markdown(
+    st.html(
         f"""
         <div class="unt-kpi-card">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.4rem;">
@@ -129,8 +129,7 @@ def render_metric_card(
             </div>
             {sub_html}
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 def create_kpi_card(title: str, value: str, delta: str = None, delta_color: str = "normal"):
@@ -185,7 +184,7 @@ def render_equipment_health_card(
     pres_str = f"{pres:.0f} PSI" if pres is not None else "--"
     hours_str = f"{hours:,.0f}h" if hours is not None else "--"
 
-    st.markdown(
+    st.html(
         f"""
         <div class="unt-machine-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -224,8 +223,7 @@ def render_equipment_health_card(
                 </div>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 def plot_gauge_chart(
@@ -351,13 +349,12 @@ def paginated_dataframe(df: pd.DataFrame, page_size: int = 25, key: str = "df") 
     with c1:
         page = st.number_input("Página", min_value=1, max_value=total_pages, value=1, key=f"{key}_page")
     with c2:
-        st.markdown(
+        st.html(
             f"""
             <div style='padding-top:28px; font-size:0.85rem; color:{UNT_MUTED}; text-align:center;'>
                 Mostrando {(page-1)*page_size + 1} - {min(page*page_size, len(df))} de {len(df):,} registros
             </div>
-            """,
-            unsafe_allow_html=True
+            """
         )
     with c3:
         page_size = st.selectbox("Filas por pág.", [15, 25, 50, 100], index=1, key=f"{key}_pagesize")
@@ -534,15 +531,14 @@ def render_crisp_dm_phase_indicator(current_phase: int):
         ("6", "🚀 Despliegue", "prediction")
     ]
 
-    st.markdown(
+    st.html(
         f"""
         <div class="unt-stepper-container">
             <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:{UNT_GOLD}; letter-spacing:0.08em; margin-bottom:8px;">
                 Metodología Minería de Datos & CRISP-DM
             </div>
-            <div class="unt-stepper-track">
-        """,
-        unsafe_allow_html=True
+        </div>
+        """
     )
 
     cols = st.columns(6)
@@ -559,15 +555,13 @@ def render_crisp_dm_phase_indicator(current_phase: int):
                 state_class = "step-item upcoming"
                 badge = f"FASE {num}"
 
-            st.markdown(
+            st.html(
                 f"""
                 <div class="{state_class}">
                     <div class="step-badge">{badge}</div>
                     <div class="step-title">{name}</div>
                 </div>
-                """,
-                unsafe_allow_html=True
+                """
             )
 
-    # avoid emitting raw closing tags which may render as literal text
     st.markdown("", unsafe_allow_html=True)

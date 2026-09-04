@@ -15,7 +15,7 @@ def render_dashboard():
     render_crisp_dm_phase_indicator(1)
 
     # Filter & Action Control Bar
-    st.markdown(
+    st.html(
         """
         <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 0.75rem 1.25rem; margin: 1rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -24,8 +24,7 @@ def render_dashboard():
                 </div>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
     f_col1, f_col2, f_col3 = st.columns([1.5, 1.5, 1])
@@ -93,7 +92,7 @@ def render_dashboard():
             subtitle="Tiempo medio de recuperación"
         )
 
-    st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>", unsafe_allow_html=True)
+    st.html("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>")
 
     # Fleet Health Status Cards Grid
     st.markdown("### 🏥 Matriz de Salud de la Flota Minera")
@@ -118,7 +117,7 @@ def render_dashboard():
     else:
         show_info("No hay información de salud disponible para los filtros actuales.")
 
-    st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>", unsafe_allow_html=True)
+    st.html("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>")
 
     # Telemetry and Alerts Row
     chart_col1, chart_col2 = st.columns([1.3, 1], gap="medium")

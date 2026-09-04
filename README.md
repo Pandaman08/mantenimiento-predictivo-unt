@@ -55,7 +55,7 @@ Edita `.env` con tus valores reales:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=mining_maintenance
+DB_NAME=bd_mantenimientoproductivoUNT
 DB_USER=postgres
 DB_PASS=postgres
 JWT_SECRET=your-super-secret-key-change-in-production
@@ -65,13 +65,13 @@ JWT_EXPIRATION_HOURS=24
 ## 5) Crear la base de datos PostgreSQL
 
 ```sql
-CREATE DATABASE mining_maintenance;
+CREATE DATABASE bd_mantenimientoproductivoUNT;
 ```
 
 Luego ejecuta el script SQL:
 
 ```bash
-psql -h localhost -U postgres -d mining_maintenance -f db/schema.sql
+psql -h localhost -U postgres -d bd_mantenimientoproductivoUNT -f db/schema.sql
 ```
 
 ## 6) Generar datos sintéticos

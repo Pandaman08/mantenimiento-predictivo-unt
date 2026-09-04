@@ -23,7 +23,7 @@ def render_prediction():
     st.caption("Módulo de diagnóstico y anticipación de fallas: evalúe la salud operativa mediante telemetría manual, lotes CSV o monitor en vivo.")
 
     # Active Model Header Card
-    st.markdown(
+    st.html(
         """
         <div style="background: linear-gradient(135deg, rgba(10, 43, 94, 0.05), rgba(197, 165, 90, 0.1)); border: 1px solid #CBD5E1; border-radius: 14px; padding: 0.9rem 1.3rem; margin-bottom: 1.2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -40,8 +40,7 @@ def render_prediction():
                 </span>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
     tab1, tab2, tab3 = st.tabs([

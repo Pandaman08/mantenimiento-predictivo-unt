@@ -5,6 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from scipy import stats
 from src.db.connection import db_pool
+from utils.helpers import sanitize_text
 from ui.components import (
     plot_histogram, plot_boxplot, plot_correlation_heatmap,
     plot_scatter_matrix, paginated_dataframe,

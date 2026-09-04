@@ -7,8 +7,7 @@ def render_login():
     col_hero, col_form = st.columns([1.15, 1], gap="large")
 
     with col_hero:
-        st.markdown(
-            """
+        st.html("""
             <div style="background: linear-gradient(145deg, #0A2B5E 0%, #123F80 50%, #081D40 100%); border-radius: 20px; padding: 2.2rem 2rem; color: #FFFFFF; box-shadow: 0 12px 36px rgba(10, 43, 94, 0.22); border: 1px solid rgba(255,255,255,0.12); height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem;">
@@ -57,13 +56,10 @@ def render_login():
                     <span style="background: rgba(255,255,255,0.1); padding: 0.25rem 0.6rem; border-radius: 999px; color: #E2E8F0;">CNN-LSTM Networks</span>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+        """)
 
     with col_form:
-        st.markdown(
-            """
+        st.html("""
             <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 1.8rem; box-shadow: 0 10px 25px -3px rgba(10, 43, 94, 0.08);">
                 <div style="font-size: 0.75rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 0.3rem;">
                     Acceso Seguro al Portal
@@ -71,19 +67,15 @@ def render_login():
                 <h3 style="margin: 0 0 1.2rem 0; color: #0A2B5E; font-weight: 800; font-size: 1.4rem;">
                     Autenticación de Usuarios
                 </h3>
-            """,
-            unsafe_allow_html=True
-        )
+            </div>
+        """)
 
         # Quick Access Section (1-Click Demo)
-        st.markdown(
-            """
+        st.html("""
             <div style="font-size: 0.78rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
                 ⚡ Acceso Rápido de Demostración (1 Clic):
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+        """)
         c_demo1, c_demo2 = st.columns(2)
         with c_demo1:
             if st.button("👨‍💼 Administrador", key="quick_admin", use_container_width=True):
@@ -96,7 +88,7 @@ def render_login():
             if st.button("🚜 Operador de Flota", key="quick_oper", use_container_width=True):
                 quick_login("pandaman010608@gmail.com", "operador123", "operador", 3, "Operador de Maquinaria")
 
-        st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1rem 0;'>", unsafe_allow_html=True)
+        st.html("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1rem 0;'>")
 
         tab1, tab2, tab3 = st.tabs(["🔐 Iniciar Sesión", "📝 Registrarse", "🔑 Recuperar Clave"])
         with tab1:

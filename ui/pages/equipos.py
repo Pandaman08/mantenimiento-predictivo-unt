@@ -48,17 +48,17 @@ def render_equipos_list():
         with mcol4:
             render_metric_card("Inactivos / Bajas", str(len(equipos[equipos['estado'] == 'inactivo'])), icon="⏸️")
 
-        st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1rem 0;'>", unsafe_allow_html=True)
+        st.html("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1rem 0;'>")
         st.markdown("### 🚜 Fichas Técnicas de Maquinaria")
 
         for _, eq in equipos.iterrows():
             status = eq['estado']
             badge_class = "status-pill-success" if status == 'activo' else ("status-pill-warning" if status == 'mantenimiento' else "status-pill-danger")
 
-                    with st.expander(sanitize_text(f"{eq['codigo']} — {eq['nombre']} ({eq['tipo'].upper()})"), expanded=False):
+            with st.expander(sanitize_text(f"{eq['codigo']} — {eq['nombre']} ({eq['tipo'].upper()})"), expanded=False):
                 d_col1, d_col2 = st.columns([1.2, 1], gap="medium")
                 with d_col1:
-                    st.markdown("<strong>Especificaciones Generales:</strong>", unsafe_allow_html=True)
+                    st.html("<strong>Especificaciones Generales:</strong>")
                     st.write(f"• **Fabricante:** {sanitize_text(eq.get('fabricante') or 'Caterpillar / Bucyrus')}")
                     st.write(f"• **Modelo:** {sanitize_text(eq.get('modelo') or 'Heavy Industry Series')}")
                     st.write(f"• **Número de Serie:** `{sanitize_text(eq.get('numero_serie') or 'SN-2024-X')}`")
@@ -66,7 +66,7 @@ def render_equipos_list():
                     st.write(f"• **Fecha Instalación:** {sanitize_text(eq.get('fecha_instalacion'))}")
 
                 with d_col2:
-                    st.markdown("<strong>Sensores Telemétricos Instalados:</strong>", unsafe_allow_html=True)
+                    st.html("<strong>Sensores Telemétricos Instalados:</strong>")
                     sensors = load_sensores_by_equipo(eq['id'])
                     if not sensors.empty:
                         for _, sen in sensors.iterrows():
@@ -80,7 +80,7 @@ def render_equipos_list():
                         st.caption("No se registran sensores específicos para esta unidad.")
 
                     # Action row
-                    st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:0.6rem 0;'>", unsafe_allow_html=True)
+                    st.html("<hr style='border:0; border-top:1px solid #E2E8F0; margin:0.6rem 0;'>")
                     act_c1, act_c2 = st.columns(2)
                     with act_c1:
                         new_status = st.selectbox(

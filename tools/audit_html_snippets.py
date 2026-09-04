@@ -14,7 +14,7 @@ for dirpath, dirnames, filenames in os.walk(repo_root):
         if not fn.endswith('.py'):
             continue
         path = os.path.join(dirpath, fn)
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, 'r', encoding='utf-8', errors='ignore') as f:
             src = f.read()
         for m in re.finditer(r"st\.markdown\((?P<args>.*?)\)", src, re.S):
             args = m.group('args')

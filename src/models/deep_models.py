@@ -1,12 +1,22 @@
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import (Input, Conv1D, LSTM, Dense, Dropout, BatchNormalization,
-                                      MaxPooling1D, Flatten, Concatenate, RepeatVector, TimeDistributed)
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-from tensorflow.keras.utils import to_categorical
+from typing import Dict, Any, Tuple, Optional
+
+try:
+    import tensorflow as tf
+    from tensorflow.keras.models import Model, Sequential
+    from tensorflow.keras.layers import (Input, Conv1D, LSTM, Dense, Dropout, BatchNormalization,
+                                          MaxPooling1D, Flatten, Concatenate, RepeatVector, TimeDistributed)
+    from tensorflow.keras.optimizers import Adam
+    from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
+    from tensorflow.keras.utils import to_categorical
+    HAS_TENSORFLOW = True
+except (ImportError, ModuleNotFoundError):
+    HAS_TENSORFLOW = False
+    tf = None
+    Model = Any
+    Sequential = Any
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (accuracy_score, precision_score, recall_score, f1_score,
                             roc_auc_score, average_precision_score, confusion_matrix)
@@ -14,13 +24,13 @@ import joblib
 import json
 import time
 import logging
-from typing import Dict, Any, Tuple, Optional
 from config.settings import settings
 
 logger = logging.getLogger(__name__)
 
 # Set random seeds for reproducibility
-tf.random.set_seed(42)
+if HAS_TENSORFLOW and tf is not None:
+    tf.random.set_seed(42)
 np.random.seed(42)
 
 class CNNLSTMModel:
@@ -388,7 +398,9 @@ def train_deep_models(X_train_seq, y_train_seq, X_val_seq, y_val_seq,
     results = {}
     models = {}
     
-    # Calculate class weights for imbalanced data
+    if not HAS_TENSORFLOW:
+        logger.warning("TensorFlow not installed. Deep learning models training skipped.")
+        return results, models
     from sklearn.utils.class_weight import compute_class_weight
     classes = np.unique(y_train_seq)
     class_weights = compute_class_weight('balanced', classes=classes, y=y_train_seq)
