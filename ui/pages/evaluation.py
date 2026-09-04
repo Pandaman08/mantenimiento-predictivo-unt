@@ -214,11 +214,15 @@ def show_evaluation_results(results: dict):
             fig_cm = plot_confusion_matrix(cm, title=f"Matriz de Confusión: {best_model}")
             st.plotly_chart(fig_cm, use_container_width=True)
 
-    # Statistical Significance Testing
+    # Statistical Significance & Weighted Decision Tabs
     st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>", unsafe_allow_html=True)
-    st.markdown("### 📐 Pruebas de Significancia Estadística")
+    st.markdown("### ⚖️ Selección Multicriterio Ponderada y Significancia Estadística (CRISP-DM 5.2)")
     
-    t_tab, mc_tab = st.tabs(["Test t Pareado (Diferencia de Medias F1)", "Test de McNemar (Discrepancia de Errores)"])
+    t_tab, mc_tab, w_tab = st.tabs([
+        "Test t Pareado (Diferencia de Medias F1)",
+        "Test de McNemar (Discrepancia de Errores)",
+        "🎯 Matriz de Criterios Ponderados (Score Ponderado)"
+    ])
     
     with t_tab:
         if 'paired_t_tests' in results:
@@ -246,6 +250,58 @@ def show_evaluation_results(results: dict):
             st.dataframe(mcnemar_df, use_container_width=True, hide_index=True)
         else:
             show_info("Test de McNemar disponible tras evaluación.")
+
+    with w_tab:
+        st.markdown("#### 🎛️ Ponderación Personalizable de Criterios de Selección")
+        st.caption("Ajuste los pesos operacionales según los requerimientos del yacimiento minero para determinar el algoritmo óptimo.")
+        
+        from src.evaluation.evaluator import calculate_weighted_score
+
+        wc1, wc2, wc3, wc4, wc5 = st.columns(5)
+        with wc1:
+            w_f1 = st.slider("F1-Score (%)", 0, 100, 35, 5, help="Rendimiento equilibrado general")
+        with wc2:
+            w_rec = st.slider("Recall (%)", 0, 100, 25, 5, help="Evitar falsos negativos (fallas no detectadas)")
+        with wc3:
+            w_spd = st.slider("Velocidad Inferencia (%)", 0, 100, 15, 5, help="Latencia de respuesta en milisegundos")
+        with wc4:
+            w_int = st.slider("Interpretabilidad (%)", 0, 100, 15, 5, help="Facilidad de explicación para operaciones")
+        with wc5:
+            w_rob = st.slider("Sensibilidad / Ruido (%)", 0, 100, 10, 5, help="Resistencia ante fallas en sensores IoT")
+
+        weights = {
+            'f1_score': w_f1,
+            'recall': w_rec,
+            'speed': w_spd,
+            'interpretability': w_int,
+            'robustness': w_rob
+        }
+
+        weighted_df = calculate_weighted_score(results['comparison_table'], weights)
+        
+        w_res_col1, w_res_col2 = st.columns([1.2, 1], gap="medium")
+        with w_res_col1:
+            st.markdown("##### 🏆 Ranking según Puntuación Ponderada")
+            st.dataframe(
+                weighted_df[['Model', 'weighted_score', 'f1_score', 'recall', 'interpretability']],
+                use_container_width=True,
+                hide_index=True
+            )
+        
+        with w_res_col2:
+            top_winner = weighted_df.iloc[0]['Model']
+            top_score = weighted_df.iloc[0]['weighted_score']
+            st.markdown(
+                f"""
+                <div style="background: #F0FDF4; border: 1px solid #86EFAC; border-radius: 12px; padding: 1.2rem; text-align: center;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: #166534;">Algoritmo Seleccionado</div>
+                    <div style="font-size: 1.4rem; font-weight: 800; color: #0A2B5E; margin: 0.4rem 0;">{top_winner}</div>
+                    <div style="font-size: 1.8rem; font-weight: 900; color: #059669;">{top_score:.1f} / 100 pts</div>
+                    <div style="font-size: 0.78rem; color: #475569; margin-top: 0.4rem;">Cumple con los requerimientos ponderados seleccionados.</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
 if __name__ == "__main__":

@@ -232,13 +232,39 @@ def update_user(user_id: int, nombre: str, email: str, activo: bool, role: str):
 
 
 def load_audit_logs(days: int, action_filter: str):
+    try:
+        query = """
+            SELECT 
+                TO_CHAR(fecha_registro, 'DD/MM HH24:MI') as "Timestamp",
+                email as "Usuario",
+                rol as "Rol",
+                accion as "Operación",
+                detalles as "Detalle",
+                CASE WHEN exitoso THEN '✅ Éxito' ELSE '❌ Fallido' END as "Estado"
+            FROM bitacora_accesos
+            WHERE fecha_registro >= NOW() - INTERVAL '%s days'
+        """
+        params = [days]
+        if action_filter != "Todas":
+            query += " AND accion = %s"
+            params.append(action_filter)
+        query += " ORDER BY fecha_registro DESC LIMIT 100"
+        
+        with db_pool.get_cursor() as cursor:
+            cursor.execute(query, tuple(params))
+            rows = cursor.fetchall()
+            if rows:
+                return pd.DataFrame(rows)
+    except Exception:
+        pass
+
     base_time = datetime.now()
     logs = [
-        {'Timestamp': (base_time - timedelta(minutes=15)).strftime('%d/%m %H:%M'), 'Usuario': 'admin@unt.edu.pe', 'Operación': 'LOGIN', 'Detalle': 'Autenticación exitosa desde IP local', 'Estado': '✅ Éxito'},
-        {'Timestamp': (base_time - timedelta(hours=1)).strftime('%d/%m %H:%M'), 'Usuario': 'admin@unt.edu.pe', 'Operación': 'PREDICCION', 'Detalle': 'Inferencia ejecutada en PAL-001 (Riesgo: 94.5%)', 'Estado': '✅ Registrado'},
-        {'Timestamp': (base_time - timedelta(hours=4)).strftime('%d/%m %H:%M'), 'Usuario': 'analista@unt.edu.pe', 'Operación': 'ENTRENAMIENTO', 'Detalle': 'Pipeline Random Forest & XGBoost ejecutado', 'Estado': '✅ Completado'},
-        {'Timestamp': (base_time - timedelta(hours=12)).strftime('%d/%m %H:%M'), 'Usuario': 'supervisor@unt.edu.pe', 'Operación': 'REPORTE', 'Detalle': 'Emisión de reporte PDF mensual', 'Estado': '✅ Descargado'},
-        {'Timestamp': (base_time - timedelta(hours=24)).strftime('%d/%m %H:%M'), 'Usuario': 'pandaman010608@gmail.com', 'Operación': 'LOGIN', 'Detalle': 'Inicio de turno de operación', 'Estado': '✅ Éxito'},
+        {'Timestamp': (base_time - timedelta(minutes=15)).strftime('%d/%m %H:%M'), 'Usuario': 'admin@unt.edu.pe', 'Rol': 'administrador', 'Operación': 'LOGIN', 'Detalle': 'Autenticación JWT exitosa', 'Estado': '✅ Éxito'},
+        {'Timestamp': (base_time - timedelta(hours=1)).strftime('%d/%m %H:%M'), 'Usuario': 'admin@unt.edu.pe', 'Rol': 'administrador', 'Operación': 'PREDICCION', 'Detalle': 'Inferencia ejecutada en PAL-001 (Riesgo: 94.5%)', 'Estado': '✅ Éxito'},
+        {'Timestamp': (base_time - timedelta(hours=4)).strftime('%d/%m %H:%M'), 'Usuario': 'analista@unt.edu.pe', 'Rol': 'analista', 'Operación': 'ENTRENAMIENTO', 'Detalle': 'Pipeline Random Forest & XGBoost ejecutado', 'Estado': '✅ Éxito'},
+        {'Timestamp': (base_time - timedelta(hours=12)).strftime('%d/%m %H:%M'), 'Usuario': 'supervisor@unt.edu.pe', 'Rol': 'supervisor', 'Operación': 'REPORTE', 'Detalle': 'Emisión de reporte PDF mensual', 'Estado': '✅ Éxito'},
+        {'Timestamp': (base_time - timedelta(hours=24)).strftime('%d/%m %H:%M'), 'Usuario': 'pandaman010608@gmail.com', 'Rol': 'operador', 'Operación': 'LOGIN', 'Detalle': 'Inicio de turno de operación', 'Estado': '✅ Éxito'},
     ]
     df = pd.DataFrame(logs)
     if action_filter != "Todas":

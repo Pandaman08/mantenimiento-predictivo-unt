@@ -67,6 +67,20 @@ class AuthService:
             logger.error(f"Error registering user: {e}")
             return None
     
+    def log_access_event(self, email: str, rol: str, accion: str, exitoso: bool = True, detalles: str = "", user_id: Optional[int] = None) -> bool:
+        """Record entry in bitacora_accesos (audit log)"""
+        try:
+            query = """
+                INSERT INTO bitacora_accesos (usuario_id, email, rol, accion, exitoso, detalles)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            with db_pool.get_cursor() as cursor:
+                cursor.execute(query, (user_id, email, rol, accion, exitoso, detalles))
+                return True
+        except Exception as e:
+            logger.warning(f"Could not log access event to DB: {e}")
+            return False
+
     def authenticate(self, email: str, password: str) -> Optional[Dict[str, Any]]:
         """Authenticate user and return token if successful"""
         query = """
@@ -75,27 +89,34 @@ class AuthService:
             JOIN roles r ON r.id = u.rol_id
             WHERE u.email = %s AND u.activo = true
         """
-        with db_pool.get_cursor() as cursor:
-            cursor.execute(query, (email,))
-            user = cursor.fetchone()
-        
-        if user and self.verify_password(password, user['contrasena_hash']):
-            # Update last login
+        try:
             with db_pool.get_cursor() as cursor:
-                cursor.execute(
-                    "UPDATE usuarios SET ultimo_login = CURRENT_TIMESTAMP WHERE id = %s",
-                    (user['id'],)
-                )
+                cursor.execute(query, (email,))
+                user = cursor.fetchone()
             
-            token = self.create_token(user['id'], user['email'], user['rol_nombre'])
-            return {
-                'user_id': user['id'],
-                'nombre': user['nombre'],
-                'email': user['email'],
-                'role': user['rol_nombre'],
-                'role_id': user['rol_id'],
-                'token': token
-            }
+            if user and self.verify_password(password, user['contrasena_hash']):
+                # Update last login
+                with db_pool.get_cursor() as cursor:
+                    cursor.execute(
+                        "UPDATE usuarios SET ultimo_login = CURRENT_TIMESTAMP WHERE id = %s",
+                        (user['id'],)
+                    )
+                
+                token = self.create_token(user['id'], user['email'], user['rol_nombre'])
+                self.log_access_event(email, user['rol_nombre'], 'LOGIN', True, 'Autenticación exitosa', user['id'])
+                return {
+                    'user_id': user['id'],
+                    'nombre': user['nombre'],
+                    'email': user['email'],
+                    'role': user['rol_nombre'],
+                    'role_id': user['rol_id'],
+                    'token': token
+                }
+            else:
+                self.log_access_event(email, 'desconocido', 'LOGIN_FALLIDO', False, 'Credenciales inválidas')
+        except Exception as e:
+            logger.error(f"Error during authentication: {e}")
+            self.log_access_event(email, 'desconocido', 'LOGIN_ERROR', False, f'Error: {e}')
         return None
     
     def get_user_by_id(self, user_id: int) -> Optional[Dict[str, Any]]:

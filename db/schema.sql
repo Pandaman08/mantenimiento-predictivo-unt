@@ -47,6 +47,26 @@ CREATE INDEX idx_usuarios_rol_id ON usuarios(rol_id);
 CREATE INDEX idx_usuarios_activo ON usuarios(activo);
 
 -- =====================================================
+-- BITACORA_ACCESOS TABLE (AUDIT LOGS)
+-- =====================================================
+CREATE TABLE bitacora_accesos (
+    id BIGSERIAL PRIMARY KEY,
+    usuario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+    email VARCHAR(255) NOT NULL,
+    rol VARCHAR(50) NOT NULL,
+    accion VARCHAR(100) NOT NULL,
+    ip_origen VARCHAR(45) DEFAULT '127.0.0.1',
+    exitoso BOOLEAN NOT NULL DEFAULT TRUE,
+    detalles TEXT,
+    fecha_registro TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_bitacora_usuario_id ON bitacora_accesos(usuario_id);
+CREATE INDEX idx_bitacora_email ON bitacora_accesos(email);
+CREATE INDEX idx_bitacora_fecha ON bitacora_accesos(fecha_registro DESC);
+CREATE INDEX idx_bitacora_accion ON bitacora_accesos(accion);
+
+-- =====================================================
 -- EQUIPOS TABLE
 -- =====================================================
 CREATE TABLE equipos (

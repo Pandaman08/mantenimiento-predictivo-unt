@@ -332,9 +332,6 @@ def compare_all_models(models: Dict, X_test: np.ndarray, y_test: np.ndarray,
     # Comparison table
     comparison_df = evaluator.get_comparison_table()
     
-    # Find best model
-    best_model = comparison_df.iloc[0]['Model']
-    
     full_results = {
         'test_metrics': test_results,
         'cross_validation_timeseries': cv_ts,
@@ -348,6 +345,54 @@ def compare_all_models(models: Dict, X_test: np.ndarray, y_test: np.ndarray,
     }
     
     return full_results
+
+
+def calculate_weighted_score(comparison_list: List[Dict[str, Any]], weights: Dict[str, float]) -> pd.DataFrame:
+    """
+    Calculate weighted decision score for model selection based on user-defined criteria weights.
+    Weights keys: 'f1_score', 'recall', 'speed', 'interpretability', 'robustness'
+    """
+    df = pd.DataFrame(comparison_list).copy()
+
+    # Pre-set subjective/technical ratings if not present
+    interpretability_map = {
+        'Random Forest': 0.85,
+        'Support Vector Machine (SVM)': 0.70,
+        'SVM': 0.70,
+        'XGBoost (Optimizado)': 0.80,
+        'XGBoost': 0.80,
+        'CNN-LSTM (Deep Learning)': 0.40,
+        'CNN-LSTM': 0.40,
+        'LSTM-Autoencoder+RF': 0.50
+    }
+    
+    if 'interpretability' not in df.columns:
+        df['interpretability'] = df['Model'].map(lambda m: interpretability_map.get(m, 0.70))
+
+    if 'inference_time_ms' in df.columns:
+        max_time = df['inference_time_ms'].max() or 1.0
+        df['speed_score'] = 1.0 - (df['inference_time_ms'] / (max_time * 1.2))
+    else:
+        df['speed_score'] = 0.85
+
+    if 'robustness' not in df.columns:
+        df['robustness'] = df['f1_score'] * 0.95
+
+    # Normalize weights to sum to 1.0
+    w_sum = sum(weights.values()) or 1.0
+    norm_w = {k: v / w_sum for k, v in weights.items()}
+
+    # Calculate weighted score (0 to 100%)
+    df['weighted_score'] = (
+        df['f1_score'] * norm_w.get('f1_score', 0.35) +
+        df['recall'] * norm_w.get('recall', 0.25) +
+        df['speed_score'] * norm_w.get('speed', 0.15) +
+        df['interpretability'] * norm_w.get('interpretability', 0.15) +
+        df['robustness'] * norm_w.get('robustness', 0.10)
+    ) * 100.0
+
+    df['weighted_score'] = df['weighted_score'].round(2)
+    return df.sort_values('weighted_score', ascending=False)
 
 
 if __name__ == "__main__":

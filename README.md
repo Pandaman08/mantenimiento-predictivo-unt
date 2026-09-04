@@ -1,186 +1,156 @@
-# Sistema de Mantenimiento Predictivo - UNT
+# Sistema de Mantenimiento Predictivo con IA - UNT
 
-Aplicación de analítica predictiva para mantenimiento de equipos con Streamlit, PostgreSQL y modelos de IA.
+## Descripción
+Aplicación web desarrollada con Python + Streamlit + PostgreSQL para la gestión de mantenimiento predictivo de equipos industriales en la gran minería, aplicando la metodología CRISP-DM y modelos avanzados de Inteligencia Artificial (Machine Learning y Deep Learning).
 
-# Ingeniería de Software II - IS-402 Universidad Nacional de Trujillo
+## Grupo
+- **Cruz Esquivel Luis**
+- **Paz Romero Alvaro Joseph**
 
-# Integrantes
-  - Cruz Esquivel Luis
-  - Paz Romero Alvaro Joseph
+## Curso
+Ingeniería de Software II - IS-402  
+Universidad Nacional de Trujillo  
+Facultad de Ingeniería - Escuela de Ingeniería de Sistemas
 
-## Requisitos previos
-
-- Python 3.10 o 3.11
+## Requisitos
+- Python 3.10+
 - PostgreSQL 14+
 - Git
-## Clonar repositorio
+
+## Instalación
+
+1. **Clonar el repositorio:**
 ```bash
 git clone https://github.com/Pandaman08/mantenimiento-predictivo-unt.git
 cd mantenimiento-predictivo-unt
+```
 
+2. **Crear entorno virtual:**
 ```bash
 python -m venv venv
 ```
 
-## 2) Activar entorno virtual
-
-En Linux/macOS:
-
+3. **Activar entorno virtual:**
 ```bash
+# Windows
+venv\Scripts\activate
+
+# Linux / macOS
 source venv/bin/activate
 ```
 
-En Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-## 3) Instalar dependencias
-
+4. **Instalar dependencias:**
 ```bash
 pip install -r requirements.txt
 ```
 
-## 4) Configurar variables de entorno
-
-Copia el archivo de ejemplo:
-
+5. **Configurar variables de entorno:**
+Copia el archivo de ejemplo `.env.example` a `.env`:
 ```bash
+# Windows (PowerShell)
+Copy-Item .env.example .env
+
+# Linux / macOS
 cp .env.example .env
 ```
 
-Edita `.env` con tus valores reales:
-
+Edita `.env` con tus credenciales de PostgreSQL:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=bd_mantenimientoproductivoUNT
 DB_USER=postgres
-DB_PASS=postgres
-JWT_SECRET=your-super-secret-key-change-in-production
+DB_PASSWORD=postgres
+JWT_SECRET_KEY=unt_secret_key_mantenimiento_predictivo_2026
 JWT_EXPIRATION_HOURS=24
 ```
 
-## 5) Crear la base de datos PostgreSQL
-
+6. **Configurar base de datos PostgreSQL:**
 ```sql
 CREATE DATABASE bd_mantenimientoproductivoUNT;
 ```
-
-Luego ejecuta el script SQL:
-
+Ejecutar el script SQL de creación de esquema, restricciones y bitácora:
 ```bash
-psql -h localhost -U postgres -d bd_mantenimientoproductivoUNT -f db/schema.sql
+psql -U postgres -d bd_mantenimientoproductivoUNT -f db/schema.sql
 ```
 
-## 6) Generar datos sintéticos
-
+7. **Generar datos sintéticos de telemetría y usuarios:**
 ```bash
 python generate_data.py
 ```
 
-Este paso crea equipos, sensores y lecturas de ejemplo para alimentar la UI y los modelos.
-
-## 7) Ejecutar la aplicación
-
+## Ejecución
 ```bash
 streamlit run app.py
 ```
+La aplicación estará disponible en: `http://localhost:8501`
 
-Abra la URL mostrada por Streamlit en el navegador.
+## Usuarios y Roles de Prueba
 
-## 8) Credenciales por defecto
+| Usuario | Contraseña | Rol | Descripción |
+| --- | --- | --- | --- |
+| `admin@unt.edu.pe` | `admin123` | Administrador | Control total del sistema, usuarios RBAC y configuración |
+| `ingeniero@unt.edu.pe` | `admin123` | Ingeniero / Analista | Análisis EDA, modelado IA, validación y reportes |
+| `supervisor@unt.edu.pe` | `admin123` | Supervisor | Monitor de flota, alertas, dashboards y reportes |
+| `tecnico@unt.edu.pe` | `tec123` | Técnico / Operador | Diagnóstico en tiempo real y registro de lecturas |
 
-La base de datos incluye un usuario administrador por defecto con:
-
-- Email: `admin@unt.edu.pe`
-- Contraseña: `admin123`
-
-## 9) Flujo recomendado
-
-1. Inicie sesión.
-2. Revise la fase de negocio y EDA.
-3. Prepare y entrene modelos.
-4. Evalúe resultados.
-5. Genere reportes PDF, Word o Excel.
-6. Use la predicción en tiempo real.
-
-## 10) Estructura del proyecto
-
+## Estructura del Proyecto
 ```text
 mantenimiento-predictivo-unt/
-├── app.py
-├── generate_data.py
-├── README.md
-├── requirements.txt
-├── assets/
-├── config/
+├── app.py                      # Aplicación principal Streamlit
+├── generate_data.py            # Generador de datos sintéticos y poblamiento de DB
+├── README.md                   # Documentación principal
+├── RúbricaEvaluación.md        # Criterios de evaluación y rúbrica del curso
+├── requirements.txt            # Dependencias del proyecto
+├── config/                     # Configuración global y variables de entorno
 │   └── settings.py
-├── data/
-│   └── synthetic_readings.csv
-├── db/
+├── db/                         # Script DDL de PostgreSQL (≥8 tablas + bitácora)
 │   └── schema.sql
-├── models/
-│   ├── core_sensor_model.joblib
-│   ├── preprocessors.joblib
-│   ├── randomforest_model_meta.json
-│   ├── randomforest_model.joblib
-│   ├── svm_model_meta.json
-│   ├── svm_model.joblib
-│   ├── xgboost_model_meta.json
-│   └── xgboost_model.joblib
-├── reports/
-├── src/
-│   ├── auth/
+├── data/                       # Dataset telemétrico de lecturas
+│   └── synthetic_readings.csv
+├── models/                     # Binarios y metadatos de modelos IA entrenados
+├── src/                        # Capa de lógica de negocio y controladores
+│   ├── auth/                   # Autenticación JWT + bcrypt + bitácora
 │   │   └── auth_service.py
-│   ├── db/
+│   ├── db/                     # Conexión psycopg2 pool & operaciones SQL
 │   │   ├── connection.py
 │   │   └── db_operations.py
-│   ├── evaluation/
+│   ├── evaluation/             # Evaluador, validación cruzada y significancia estadística
 │   │   └── evaluator.py
-│   ├── models/
+│   ├── models/                 # Algoritmos tradicionales e híbridos
 │   │   ├── deep_models.py
 │   │   └── traditional_models.py
-│   ├── preprocessing/
+│   ├── preprocessing/          # Limpieza, normalización y ventanas temporales
 │   │   └── preprocessor.py
-│   ├── reports/
-│   │   └── report_generator.py
-│   └── utils/
-│       └── helpers.py
-├── tests/
-│   ├── security_test.py
-│   ├── test_auth.py
-│   ├── test_evaluation.py
-│   ├── test_models.py
-│   └── test_preprocessing.py
-├── tools/
-│   └── audit_html_snippets.py
-├── ui/
-│   ├── components/
-│   │   └── __init__.py
-│   └── pages/
-│       ├── 01_Business_Understanding.py
-│       ├── 02_Data_Understanding.py
-│       ├── 03_Data_Preparation.py
-│       ├── 04_Modeling.py
-│       ├── 05_Evaluation.py
-│       ├── 06_Deployment.py
-│       ├── admin.py
-│       ├── dashboard.py
-│       ├── eda.py
-│       ├── equipos.py
-│       ├── evaluation.py
-│       ├── history.py
-│       ├── login.py
-│       ├── prediction.py
-│       ├── reports.py
-│       └── training.py
-├── utils/
-│   ├── decorators.py
-│   ├── helpers.py
-│   └── logger.py
-└── .env.example
+│   └── reports/                # Generador de reportes PDF, Word y Excel
+│       └── report_generator.py
+├── tests/                      # Suite de pruebas unitarias e integración
+└── ui/                         # Interfaz de usuario por componentes y fases CRISP-DM
+    ├── components/
+    └── pages/
 ```
 
-Esta estructura organiza la aplicación en capas: configuración, base de datos, modelos, UI y pruebas.
+## Características Implementadas
+- ✅ Autenticación JWT + bcrypt con 4 roles y matriz de permisos RBAC
+- ✅ Dashboard con KPIs (MTBF, MTTR, Disponibilidad) y gráficos interactivos
+- ✅ Análisis Exploratorio de Datos (EDA) completo con distribuciones y correlaciones
+- ✅ Motor de IA con 5 algoritmos (3 Tradicionales + 2 Híbridos Deep Learning)
+- ✅ Aplicación rigurosa de las 6 fases de la metodología CRISP-DM
+- ✅ Selección del mejor algoritmo mediante Matriz de Criterios Ponderados
+- ✅ Validación cruzada con TimeSeriesSplit y Stratified K-Fold
+- ✅ Optimización de hiperparámetros (RandomizedSearchCV y Keras Callbacks)
+- ✅ Pruebas estadísticas (Test t pareado, Test de McNemar, Bootstrap CIs y Ruido)
+- ✅ Base de datos PostgreSQL con 9 tablas, restricciones, FKs, índices y bitácora
+- ✅ Exportación de reportes técnicos en PDF, Word (.docx) y Excel (.xlsx)
+
+## Tecnologías Utilizadas
+- **Lenguaje:** Python 3.10
+- **Frontend / UI:** Streamlit & Vanilla CSS con Glassmorphism
+- **Base de Datos:** PostgreSQL 14+ con psycopg2-binary
+- **Machine Learning & Deep Learning:** scikit-learn, XGBoost, TensorFlow / Keras
+- **Visualización:** Plotly, Seaborn, Matplotlib
+- **Seguridad:** JWT (PyJWT), bcrypt
+- **Reportes:** ReportLab (PDF), python-docx (Word), openpyxl (Excel)
+
+---
+*Universidad Nacional de Trujillo - 2026*
