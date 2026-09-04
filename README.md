@@ -105,3 +105,82 @@ La base de datos incluye un usuario administrador por defecto con:
 4. Evalúe resultados.
 5. Genere reportes PDF, Word o Excel.
 6. Use la predicción en tiempo real.
+
+## 10) Estructura del proyecto
+
+```text
+mantenimiento-predictivo-unt/
+├── app.py
+├── generate_data.py
+├── README.md
+├── requirements.txt
+├── assets/
+├── config/
+│   └── settings.py
+├── data/
+│   └── synthetic_readings.csv
+├── db/
+│   └── schema.sql
+├── models/
+│   ├── core_sensor_model.joblib
+│   ├── preprocessors.joblib
+│   ├── randomforest_model_meta.json
+│   ├── randomforest_model.joblib
+│   ├── svm_model_meta.json
+│   ├── svm_model.joblib
+│   ├── xgboost_model_meta.json
+│   └── xgboost_model.joblib
+├── reports/
+├── src/
+│   ├── auth/
+│   │   └── auth_service.py
+│   ├── db/
+│   │   ├── connection.py
+│   │   └── db_operations.py
+│   ├── evaluation/
+│   │   └── evaluator.py
+│   ├── models/
+│   │   ├── deep_models.py
+│   │   └── traditional_models.py
+│   ├── preprocessing/
+│   │   └── preprocessor.py
+│   ├── reports/
+│   │   └── report_generator.py
+│   └── utils/
+│       └── helpers.py
+├── tests/
+│   ├── security_test.py
+│   ├── test_auth.py
+│   ├── test_evaluation.py
+│   ├── test_models.py
+│   └── test_preprocessing.py
+├── tools/
+│   └── audit_html_snippets.py
+├── ui/
+│   ├── components/
+│   │   └── __init__.py
+│   └── pages/
+│       ├── 01_Business_Understanding.py
+│       ├── 02_Data_Understanding.py
+│       ├── 03_Data_Preparation.py
+│       ├── 04_Modeling.py
+│       ├── 05_Evaluation.py
+│       ├── 06_Deployment.py
+│       ├── admin.py
+│       ├── dashboard.py
+│       ├── eda.py
+│       ├── equipos.py
+│       ├── evaluation.py
+│       ├── history.py
+│       ├── login.py
+│       ├── prediction.py
+│       ├── reports.py
+│       └── training.py
+├── utils/
+│   ├── decorators.py
+│   ├── helpers.py
+│   └── logger.py
+└── .env.example
+```
+
+Esta estructura organiza la aplicación en capas: configuración, base de datos, modelos, UI y pruebas.
